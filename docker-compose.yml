@@ -1,0 +1,54 @@
+services:
+  erp:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: ["uvicorn", "app.erp.main:app", "--host", "0.0.0.0", "--port", "8001"]
+    environment:
+      ERP_DATABASE_URL: sqlite:////app/runtime/erp.db
+      DEMO_MODE: ${DEMO_MODE:-true}
+    volumes:
+      - erp-data:/app/runtime
+    ports:
+      - "127.0.0.1:8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: sqlite:////app/runtime/bridge.db
+      UPLOAD_DIR: /app/runtime/uploads
+      ERP_BASE_URL: http://erp:8001
+      DEMO_MODE: ${DEMO_MODE:-true}
+      AI_PROVIDER: ${AI_PROVIDER:-demo}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+    volumes:
+      - bridge-data:/app/runtime
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      erp:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "127.0.0.1:5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+volumes:
+  bridge-data:
+  erp-data:

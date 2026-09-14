@@ -1,0 +1,87 @@
+:root {
+  font-family: Inter, 'Segoe UI', Arial, sans-serif;
+  color: #243c36;
+  background: #f5f7f5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-size: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  outline-offset: 4px;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: 29px;
+  line-height: 1.25;
+  letter-spacing: -1px;
+  font-weight: 650;
+}
+h2 {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.25px;
+}
+h3 {
+  font-size: 14px;
+  font-weight: 650;
+}
+p {
+  line-height: 1.65;
+}
+small {
+  font-size: 11px;
+}
+input,
+select {
+  border: 1px solid #d8e0dc;
+  background: white;
+  border-radius: 5px;
+  padding: 10px 12px;
+  color: #294139;
+  min-width: 0;
+}
+input:focus,
+select:focus {
+  outline: 2px solid #528e77;
+}
+input::placeholder {
+  color: #606965;
+}
+code,
+.mono {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
