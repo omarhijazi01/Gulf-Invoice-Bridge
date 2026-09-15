@@ -1,3 +1,4 @@
+import { backendUrl } from '../services/api';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   ArrowUpRight,
@@ -67,7 +68,7 @@ export function Layout() {
           <span>
             Invoice Intelligence <span className="slash">/</span> Operations
           </span>
-          <a href="/docs" target="_blank" rel="noreferrer">
+          <a href={backendUrl('/docs')} target="_blank" rel="noreferrer">
             API documentation <ArrowUpRight size={14} />
           </a>
         </div>

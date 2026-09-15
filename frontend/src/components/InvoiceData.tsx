@@ -1,3 +1,4 @@
+import { backendUrl } from '../services/api';
 import type { Invoice } from '../types';
 import { amount, dateTime, human, StatusBadge } from './Common';
 import { fieldLabel } from './InvoiceForm';
@@ -14,7 +15,7 @@ export function InvoiceData({ invoice }: { invoice: Invoice }) {
           </div>
           <a
             className="text-link"
-            href={`/api/invoices/${invoice.id}/document`}
+            href={backendUrl(`/api/invoices/${invoice.id}/document`)}
             target="_blank"
             rel="noreferrer"
           >

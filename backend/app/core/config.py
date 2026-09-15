@@ -1,10 +1,21 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+
+
+def cors_origins_from_env() -> list[str]:
+    origins = os.getenv("CORS_ORIGINS", "").strip()
+    if not origins:
+        origins = "http://localhost:5173,http://127.0.0.1:5173"
+    result = [origin.strip().rstrip("/") for origin in origins.split(",") if origin.strip()]
+    if "*" in result:
+        raise ValueError("CORS_ORIGINS must contain explicit origins, not '*'")
+    return result
 
 
 @dataclass
 class Settings:
+    cors_origins: list[str] = field(default_factory=cors_origins_from_env)
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./runtime/bridge.db")
     erp_database_url: str = os.getenv("ERP_DATABASE_URL", "sqlite:///./runtime/erp.db")
     upload_dir: Path = Path(os.getenv("UPLOAD_DIR", "./runtime/uploads"))
