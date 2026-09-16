@@ -30,22 +30,21 @@ export function Invoices({ review = false }: { review?: boolean }) {
   return (
     <>
       <PageHeader
-        eyebrow="DOCUMENT WORKSPACE"
         title={review ? 'Review queue' : 'Invoices'}
         description={
           review
             ? 'Resolve validation issues before invoices can move to approval.'
-            : 'Track every document from extraction to ERP delivery.'
+            : 'Manage and track all processed invoices.'
         }
       >
-        <ProcessInvoice />
+        <ProcessInvoice label="Upload Invoice" />
       </PageHeader>
       {review && (
         <div className="notice">
           Human review is a required control. Save corrections, re-run validation, then approve.
         </div>
       )}
-      <section className="panel">
+      <section className="panel invoice-list-panel">
         <div className="filters">
           <label className="search">
             <Search size={17} />
@@ -104,7 +103,8 @@ export function Invoices({ review = false }: { review?: boolean }) {
         )}
         <div className="pagination">
           <span>
-            {filtered.length} invoices · Page {current} of {pages}
+            {filtered.length ? (current - 1) * 10 + 1 : 0}–{Math.min(current * 10, filtered.length)}{' '}
+            of {filtered.length} invoices · Page {current} of {pages}
           </span>
           <div>
             <button

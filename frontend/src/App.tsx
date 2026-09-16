@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Invoices } from './pages/Invoices';
+import { ReviewQueue } from './pages/ReviewQueue';
 import { InvoiceDetails } from './pages/InvoiceDetails';
 import { Integrations, Settings } from './pages/Integrations';
 import { Logs } from './pages/Logs';
@@ -13,7 +14,7 @@ export default function App() {
           <Route index element={<Dashboard />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="invoices/:id" element={<InvoiceDetails />} />
-          <Route path="review" element={<Invoices review />} />
+          <Route path="review" element={<ReviewQueue />} />
           <Route path="integrations" element={<Integrations />} />
           <Route path="logs" element={<Logs />} />
           <Route path="settings" element={<Settings />} />

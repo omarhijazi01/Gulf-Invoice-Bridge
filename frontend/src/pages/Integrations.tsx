@@ -9,9 +9,8 @@ export function Integrations() {
   return (
     <>
       <PageHeader
-        eyebrow="ENTERPRISE CONNECTIVITY"
         title="Integrations"
-        description="Approved invoice data, delivered through a controlled API boundary."
+        description="Monitor your configured ERP connection and invoice delivery."
       >
         <button className="button secondary" onClick={reload}>
           Check connection
@@ -24,20 +23,46 @@ export function Integrations() {
       ) : (
         data && (
           <>
-            <section className="panel connector-card">
-              <div className="connector-icon">
-                <Database size={32} />
-              </div>
-              <div>
-                <span className="pill">LOCAL SIMULATOR</span>
-                <h2>Mock ERP</h2>
-                <p>Independent HTTP service with its own persistent database.</p>
-                <code>{data[0].erp_endpoint}/api/mock-erp/invoices</code>
-              </div>
-              <strong className={data[0].erp === 'Connected' ? 'green' : 'orange'}>
-                {data[0].erp}
-              </strong>
-            </section>
+            <div className="connection-layout">
+              <section className="panel connector-card">
+                <div className="connector-icon">
+                  <Database size={32} />
+                </div>
+                <div>
+                  <span className="pill">LOCAL SIMULATOR</span>
+                  <h2>Mock ERP</h2>
+                  <p>Independent HTTP service with its own persistent database.</p>
+                  <code>{data[0].erp_endpoint}/api/mock-erp/invoices</code>
+                </div>
+                <strong className={`badge ${data[0].erp === 'Connected' ? 'positive' : 'warning'}`}>
+                  {data[0].erp}
+                </strong>
+              </section>
+              <section className="panel panel-padding">
+                <h2>Integration controls</h2>
+                <p className="muted">
+                  Choose a response scenario on an approved invoice. A failure preserves the
+                  approved data and records the request for manual retry.
+                </p>
+                <div className="integration-flow">
+                  <span>Approved invoice</span>
+                  <ArrowRight size={18} />
+                  <span>Payload transformation</span>
+                  <ArrowRight size={18} />
+                  <span>ERP connector</span>
+                  <ArrowRight size={18} />
+                  <span>ERP database</span>
+                </div>
+                <Link className="button primary" to="/invoices">
+                  <Plug size={16} />
+                  Open invoices
+                </Link>
+                <p className="fineprint">
+                  Failure scenarios are simulations: HTTP 401, 400, 500 and timeout. No government
+                  or commercial ERP connection is configured.
+                </p>
+              </section>
+            </div>
             <div className="metrics">
               <MetricCard
                 label="Requests today"
@@ -60,30 +85,6 @@ export function Integrations() {
                 note={dateTime(data[1].last_success)}
               />
             </div>
-            <section className="panel panel-padding">
-              <h2>Integration controls</h2>
-              <p className="muted">
-                Choose a response scenario on an approved invoice. A failure preserves the approved
-                data and records the request for manual retry.
-              </p>
-              <div className="integration-flow">
-                <span>Approved invoice</span>
-                <ArrowRight size={18} />
-                <span>Payload transformation</span>
-                <ArrowRight size={18} />
-                <span>ERP connector</span>
-                <ArrowRight size={18} />
-                <span>ERP database</span>
-              </div>
-              <Link className="button primary" to="/invoices">
-                <Plug size={16} />
-                Open invoices
-              </Link>
-              <p className="fineprint">
-                Failure scenarios are simulations: HTTP 401, 400, 500 and timeout. No government or
-                commercial ERP connection is configured.
-              </p>
-            </section>
           </>
         )
       )}
@@ -95,9 +96,8 @@ export function Settings() {
   return (
     <>
       <PageHeader
-        eyebrow="WORKSPACE CONFIGURATION"
         title="Settings"
-        description="Read-only runtime configuration. Change environment variables and restart to update."
+        description="View processing and integration configuration. These settings are managed on the server."
       />
       {error ? (
         <ErrorState message={error} retry={reload} />
@@ -105,22 +105,63 @@ export function Settings() {
         <LoadingState />
       ) : (
         data && (
-          <section className="panel">
-            <dl className="data-grid">
+          <section className="panel settings-layout">
+            <nav className="settings-navigation" aria-label="Settings sections">
+              <a href="#settings-general">General</a>
+              <a href="#settings-processing">Document processing</a>
+              <a href="#settings-integration">Integration</a>
+            </nav>
+            <div className="settings-content">
+              <div className="panel-header">
+                <h2>Runtime Settings</h2>
+                <span className="badge neutral">Read only</span>
+              </div>
               {[
-                ['Environment', data.environment],
-                ['Demo mode', data.demo_mode ? 'Enabled' : 'Disabled'],
-                ['Extraction provider', data.ai_provider],
-                ['ERP environment', 'LOCAL SIMULATOR'],
-                ['Database', data.database],
-                ['OCR', 'Not supported — text PDFs only'],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label}</dt>
-                  <dd>{value}</dd>
-                </div>
+                {
+                  id: 'general',
+                  title: 'General',
+                  fields: [
+                    ['Environment', data.environment],
+                    ['Database', data.database],
+                  ],
+                },
+                {
+                  id: 'processing',
+                  title: 'Document processing',
+                  fields: [
+                    ['Extraction provider', data.ai_provider],
+                    ['Demo mode', data.demo_mode ? 'Enabled' : 'Disabled'],
+                    ['Supported documents', 'Text-based PDF · Maximum 10 MB'],
+                    ['OCR', 'Not supported'],
+                  ],
+                },
+                {
+                  id: 'integration',
+                  title: 'ERP integration',
+                  fields: [
+                    ['Connection', data.erp],
+                    ['Endpoint', data.erp_endpoint],
+                    ['Connector', 'Independent ERP simulator'],
+                  ],
+                },
+              ].map((section) => (
+                <section
+                  className="settings-section"
+                  id={`settings-${section.id}`}
+                  key={section.id}
+                >
+                  <h3>{section.title}</h3>
+                  <dl className="settings-fields">
+                    {section.fields.map(([label, value]) => (
+                      <div key={label}>
+                        <dt>{label}</dt>
+                        <dd>{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </section>
               ))}
-            </dl>
+            </div>
           </section>
         )
       )}

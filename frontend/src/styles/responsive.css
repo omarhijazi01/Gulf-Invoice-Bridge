@@ -1,8 +1,4 @@
 @media (min-width: 1500px) {
-  main {
-    padding-left: 48px;
-    padding-right: 48px;
-  }
   .flow-stages {
     gap: 60px;
   }
@@ -11,21 +7,6 @@
   }
 }
 @media (max-width: 1200px) {
-  .sidebar {
-    width: 195px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .workspace {
-    margin-left: 195px;
-    width: calc(100% - 195px);
-  }
-  main {
-    padding: 25px;
-  }
-  .brand {
-    font-size: 16px;
-  }
   .workflow-banner {
     padding: 24px;
   }
@@ -94,66 +75,8 @@
   .rule-list {
     grid-template-columns: 1fr;
   }
-  .topbar {
-    padding: 0 25px;
-  }
 }
 @media (max-width: 640px) {
-  .app-shell {
-    display: block;
-  }
-  .sidebar {
-    position: relative;
-    width: 100%;
-    padding: 15px;
-    border-right: 0;
-    border-bottom: 1px solid #e0e8d9;
-  }
-  .brand {
-    font-size: 17px;
-  }
-  .brand-symbol {
-    width: 34px;
-    height: 36px;
-  }
-  .workspace-label,
-  .sidebar-note,
-  .profile {
-    display: none;
-  }
-  .sidebar nav {
-    display: flex;
-    overflow-x: auto;
-    margin-top: 15px;
-    gap: 5px;
-  }
-  .sidebar nav a {
-    padding: 9px;
-    font-size: 10px;
-    white-space: nowrap;
-    gap: 6px;
-  }
-  .sidebar nav svg {
-    width: 14px;
-  }
-  .workspace {
-    margin: 0;
-    width: 100%;
-  }
-  .topbar {
-    height: 45px;
-    padding: 0 18px;
-    font-size: 9px;
-  }
-  .topbar a {
-    font-size: 9px;
-  }
-  .topbar .slash {
-    padding: 0 6px;
-  }
-  main {
-    padding: 24px 16px;
-  }
   .page-header {
     gap: 16px;
     margin-bottom: 20px;

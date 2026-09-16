@@ -1,220 +1,115 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, FileText, ShieldCheck, UserCheck, Workflow } from 'lucide-react';
+import { ArrowUpRight, ListChecks, Plug, RefreshCw, ScrollText } from 'lucide-react';
 import { api } from '../services/api';
 import { useResource } from '../hooks/useResource';
-import {
-  dateTime,
-  EmptyState,
-  ErrorState,
-  LoadingState,
-  MetricCard,
-  PageHeader,
-} from '../components/Common';
-import { InvoiceTable } from '../components/InvoiceTable';
+import { ErrorState, MetricCard, PageHeader } from '../components/Common';
 import { ProcessInvoice } from '../components/ProcessInvoice';
-const load = () => Promise.all([api.stats(), api.invoices(), api.system()]);
-export function Dashboard() {
-  const { data, error, loading, reload } = useResource(load);
+import { InvoiceStatusDistribution, ProcessingTrend } from '../components/DashboardCharts';
+import { RecentInvoices } from '../components/RecentInvoices';
+import { dashboardMetrics } from '../components/dashboardData';
+
+function DashboardLoading() {
   return (
-    <>
+    <div className="dashboard-loading" role="status" aria-label="Loading dashboard">
+      <span className="sr-only">Loading dashboard…</span>
+      <div className="metrics">
+        {[0, 1, 2, 3].map((key) => (
+          <div className="metric skeleton-card" key={key}>
+            <span />
+            <span />
+            <span />
+          </div>
+        ))}
+      </div>
+      <div className="overview-grid">
+        <div className="panel skeleton-chart" />
+        <div className="panel skeleton-chart" />
+      </div>
+    </div>
+  );
+}
+
+export function Dashboard() {
+  const { data: invoices, error, loading, reload } = useResource(api.invoices);
+  const metrics = dashboardMetrics(invoices || []);
+  return (
+    <div className="overview-page">
       <PageHeader
-        eyebrow="OPERATIONS OVERVIEW"
-        title="Invoice Intelligence & Integration"
-        description="Turn invoice documents into validated, enterprise-ready data."
+        title="Invoice Operations Overview"
+        description="Monitor invoice processing, validation, review, and ERP integration."
       >
-        <button className="button secondary" onClick={reload}>
-          Refresh
+        <button
+          className="button secondary refresh-button"
+          onClick={reload}
+          disabled={loading}
+          aria-label="Refresh dashboard"
+        >
+          <RefreshCw size={15} className={loading ? 'spin' : ''} />
+          <span>Refresh</span>
         </button>
         <ProcessInvoice />
       </PageHeader>
-      <section className="workflow-banner">
-        <div>
-          <span className="tiny-label">CONTROLLED BY DESIGN</span>
-          <h2>
-            AI extracts. Rules validate.
-            <br />
-            Humans approve. APIs integrate.
-          </h2>
-          <p>One traceable workflow. Every decision accounted for.</p>
-        </div>
-        <div className="flow-stages">
-          {[
-            [FileText, '01', 'Extract'],
-            [ShieldCheck, '02', 'Validate'],
-            [UserCheck, '03', 'Approve'],
-            [Workflow, '04', 'Integrate'],
-          ].map(([Icon, number, label]) => {
-            const Symbol = Icon as typeof FileText;
-            return (
-              <div key={String(label)}>
-                <span className="flow-icon">
-                  <Symbol size={23} />
-                </span>
-                <small>{String(number)}</small>
-                <strong>{String(label)}</strong>
-              </div>
-            );
-          })}
-        </div>
-      </section>
       {error ? (
-        <ErrorState message={error} retry={reload} />
+        <ErrorState message="We couldn’t load your invoices. Please try again." retry={reload} />
       ) : loading ? (
-        <LoadingState />
+        <DashboardLoading />
       ) : (
-        data &&
-        (() => {
-          const [stats, invoices, system] = data;
-          return (
-            <>
-              <div className="metrics">
-                <MetricCard
-                  label="Invoices processed"
-                  value={stats.processed}
-                  note={`${stats.total_invoices} documents in workspace`}
-                />
-                <MetricCard
-                  label="Validation success"
-                  value={`${stats.validation_success_rate}%`}
-                  note="Current validated / processed invoices"
-                />
-                <MetricCard
-                  label="Needs review"
-                  value={stats.needs_review}
-                  note="Human attention required"
-                  accent
-                />
-                <MetricCard
-                  label="Integration success"
-                  value={`${stats.integration_success_rate}%`}
-                  note={`${stats.successful_attempts} of ${stats.integration_attempts} attempts succeeded`}
-                />
-              </div>
-              <div className="dashboard-grid">
-                <section className="panel">
-                  <div className="panel-header">
-                    <div>
-                      <h2>Integration performance</h2>
-                      <p>Last {stats.performance.length} attempts · response time in ms</p>
-                    </div>
-                    <span className="pill">LOCAL SIMULATOR</span>
-                  </div>
-                  {stats.performance.length ? (
-                    <div
-                      className="chart"
-                      role="img"
-                      aria-label="Integration attempt durations; green means success, amber means failed"
-                    >
-                      {stats.performance.map((log) => (
-                        <div className="bar-column" key={log.id}>
-                          <span>{log.duration_ms}</span>
-                          <div
-                            className={`bar ${log.result === 'SUCCESS' ? 'success' : 'failed'}`}
-                            style={{
-                              height: Math.max(
-                                8,
-                                (log.duration_ms /
-                                  Math.max(...stats.performance.map((l) => l.duration_ms), 1)) *
-                                  100,
-                              ),
-                            }}
-                          />
-                          <small>#{log.id}</small>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <EmptyState
-                      title="No integration attempts yet"
-                      description="Approve an invoice and send it to the local ERP."
-                    />
-                  )}
-                  <div className="chart-legend">
-                    <span>
-                      <i className="green-dot" /> Success
-                    </span>
-                    <span>
-                      <i className="amber-dot" /> Failed
-                    </span>
-                    <strong>
-                      {stats.average_response_ms} ms <small>average response</small>
-                    </strong>
-                  </div>
-                </section>
-                <section className="panel">
-                  <div className="panel-header">
-                    <div>
-                      <h2>System health</h2>
-                      <p>Live local service checks</p>
-                    </div>
-                    <CheckCircle2 size={19} className="green" />
-                  </div>
-                  <div className="health-list">
-                    {[
-                      ['Document processing', system.document_processing],
-                      ['Extraction provider', system.extraction],
-                      ['Validation engine', system.validation],
-                      ['ERP integration', system.erp],
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <span>{label}</span>
-                        <strong className={value === 'Offline' ? 'orange' : ''}>
-                          <i className={value === 'Offline' ? 'amber-dot' : 'green-dot'} />
-                          {value}
-                        </strong>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="panel-foot">
-                    {system.demo_mode ? 'DEMO MODE' : 'LOCAL MODE'}{' '}
-                    <span>Fictional samples are labeled throughout.</span>
-                  </div>
-                </section>
-              </div>
-              <section className="panel">
+        invoices && (
+          <>
+            <div className="metrics" aria-label="Invoice metrics">
+              <MetricCard
+                label="Total Invoices"
+                value={metrics.total}
+                note="Documents in your workspace"
+              />
+              <MetricCard
+                label="Pending Review"
+                value={metrics.review}
+                note={metrics.review ? 'Requires human attention' : 'No invoices awaiting review'}
+                accent
+              />
+              <MetricCard
+                label="Validated"
+                value={metrics.validated}
+                note="Passed validation, including later stages"
+              />
+              <MetricCard
+                label="Integrated"
+                value={metrics.integrated}
+                note="Successfully delivered to ERP"
+              />
+            </div>
+            <div className="overview-grid">
+              <ProcessingTrend invoices={invoices} />
+              <InvoiceStatusDistribution invoices={invoices} />
+              <RecentInvoices invoices={invoices} />
+              <section className="panel quick-actions" aria-labelledby="quick-actions-title">
                 <div className="panel-header">
-                  <div>
-                    <h2>Recent invoices</h2>
-                    <p>Your latest documents and their progress</p>
-                  </div>
-                  <Link className="text-link" to="/invoices">
-                    View all invoices <ArrowRight size={15} />
+                  <h2 id="quick-actions-title">Quick Actions</h2>
+                </div>
+                <div className="quick-action-list">
+                  <ProcessInvoice label="Process New Invoice" />
+                  <Link className="button secondary" to="/review">
+                    <ListChecks size={16} />
+                    View Review Queue
+                    <ArrowUpRight size={14} />
+                  </Link>
+                  <Link className="button secondary" to="/integrations">
+                    <Plug size={16} />
+                    Manage Integrations
+                    <ArrowUpRight size={14} />
+                  </Link>
+                  <Link className="button secondary" to="/logs">
+                    <ScrollText size={16} />
+                    View Activity Logs
+                    <ArrowUpRight size={14} />
                   </Link>
                 </div>
-                <InvoiceTable invoices={invoices.slice(0, 5)} />
               </section>
-              <section className="panel activity">
-                <div className="panel-header">
-                  <div>
-                    <h2>Recent activity</h2>
-                    <p>Persisted workflow events</p>
-                  </div>
-                  <Link to="/logs" className="text-link">
-                    Integration logs <ArrowRight size={15} />
-                  </Link>
-                </div>
-                {stats.recent_activity.length ? (
-                  <div className="activity-grid">
-                    {stats.recent_activity.slice(0, 4).map((event) => (
-                      <Link to={`/invoices/${event.invoice_id}`} key={event.id}>
-                        <span className="event-dot" />
-                        <div>
-                          <strong>{event.detail}</strong>
-                          <small>{dateTime(event.timestamp)}</small>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="panel-padding muted">
-                    Process an invoice to begin the audit trail.
-                  </p>
-                )}
-              </section>
-            </>
-          );
-        })()
+            </div>
+          </>
+        )
       )}
-    </>
+    </div>
   );
 }

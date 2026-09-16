@@ -66,16 +66,16 @@ td strong {
   white-space: nowrap;
 }
 .positive {
-  background: #edf4ec;
-  color: #61805b;
+  background: #e0f2eb;
+  color: #23644f;
 }
 .warning {
-  background: #fbf3dd;
-  color: #a18440;
+  background: #fff0db;
+  color: #87500d;
 }
 .negative {
-  background: #fbecea;
-  color: #ac6158;
+  background: #fde8e6;
+  color: #a33c37;
 }
 .neutral {
   background: #f0f3f2;
