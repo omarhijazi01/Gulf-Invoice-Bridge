@@ -1,7 +1,50 @@
 :root {
   font-family: Inter, 'Segoe UI', Arial, sans-serif;
-  color: #243c36;
-  background: #f5f7f5;
+  --bg-page: #eef2f5;
+  --bg-card: #ffffff;
+  --border-subtle: #e5e9ec;
+  --border-input: #dce1e5;
+  --sidebar-bg: #0e2929;
+  --sidebar-active-bg: #3f6a5f;
+  --sidebar-text: #cfe3dc;
+  --sidebar-text-active: #ffffff;
+  --brand-primary: #154a3c;
+  --brand-primary-hover: #123f33;
+  --text-primary: #0f172a;
+  --text-secondary: #6b7684;
+  --text-muted: #94a0aa;
+  --status-success-bg: #d6eee4;
+  --status-success-text: #2f8a67;
+  --status-success-strong: #01573e;
+  --status-success-mid: #359d77;
+  --status-warning-bg: #fde3d2;
+  --status-warning-text: #c1633b;
+  --status-warning-strong: #fdbb44;
+  --status-error-bg: #fdd8d8;
+  --status-error-text: #d6474d;
+  --status-error-strong: #e4222a;
+  --kpi-alert-text: #e2410c;
+  --chart-series-a: #0b5d4f;
+  --chart-series-b: #5da9c8;
+  --chart-grid-line: #edf1f3;
+  --donut-slice-pdf: #0a4336;
+  --donut-slice-image: #4aaf8c;
+  --donut-slice-excel: #cfb96b;
+  --donut-slice-other: #9bb9b7;
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-input: 8px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 4%);
+  --forest: var(--brand-primary);
+  --forest-hover: var(--brand-primary-hover);
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
+  --line: var(--border-subtle);
+  --canvas: var(--bg-page);
+  --radius: var(--radius-card);
+  color: var(--text-primary);
+  background: var(--bg-page);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   font-size: 14px;
@@ -11,6 +54,7 @@
 }
 body {
   margin: 0;
+  min-width: 320px;
 }
 button,
 input,
@@ -84,4 +128,16 @@ input::placeholder {
 code,
 .mono {
   font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+:focus-visible {
+  outline: 2px solid #258273;
+  outline-offset: 3px;
+}
+button:active:not(:disabled),
+a.button:active {
+  transform: translateY(1px);
+}
+button:disabled:hover {
+  transform: none;
 }

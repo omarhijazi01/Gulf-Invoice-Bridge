@@ -11,7 +11,7 @@ export function StatusBadge({ status }: { status: string }) {
   const negative = ['ERROR', 'FAILED', 'INTEGRATION_FAILED'].includes(status);
   return (
     <span
-      className={`badge ${positive ? 'positive' : negative ? 'negative' : status === 'REVIEW_REQUIRED' || status === 'WARNING' ? 'warning' : 'neutral'}`}
+      className={`badge ${positive ? 'positive' : negative ? 'negative' : ['REVIEW_REQUIRED', 'WARNING', 'PENDING'].includes(status) ? 'warning' : 'neutral'}`}
     >
       {positive ? <Check size={12} /> : negative ? <AlertCircle size={12} /> : <Clock3 size={12} />}{' '}
       {human(status)}

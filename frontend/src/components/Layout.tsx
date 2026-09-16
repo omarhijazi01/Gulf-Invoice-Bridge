@@ -1,4 +1,4 @@
-import { backendUrl } from '../services/api';
+import { useEffect, useRef, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   ArrowUpRight,
@@ -6,80 +6,190 @@ import {
   FileText,
   LayoutDashboard,
   ListChecks,
+  Menu,
   Plug,
   ScrollText,
   Settings2,
+  X,
+  Search,
 } from 'lucide-react';
+import { backendUrl } from '../services/api';
+import { WorkspaceSearch } from './WorkspaceSearch';
+import { ProcessInvoice } from './ProcessInvoice';
+
 const links = [
   ['/', 'Overview', LayoutDashboard],
   ['/invoices', 'Invoices', FileText],
-  ['/review', 'Review queue', ListChecks],
+  ['/review', 'Review Queue', ListChecks],
   ['/integrations', 'Integrations', Plug],
-  ['/logs', 'Activity logs', ScrollText],
+  ['/logs', 'Activity Logs', ScrollText],
   ['/settings', 'Settings', Settings2],
 ] as const;
+
+function Brand({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <NavLink to="/" className="brand" onClick={onNavigate}>
+      <span className="brand-symbol">
+        <Blocks size={25} aria-hidden="true" />
+      </span>
+      <span>Gulf Invoice Bridge</span>
+    </NavLink>
+  );
+}
+
+function Navigation({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+  return (
+    <nav aria-label={mobile ? 'Mobile navigation' : 'Main navigation'}>
+      {links.map(([path, label, Icon]) => (
+        <NavLink key={path} to={path} end={path === '/'} onClick={onNavigate}>
+          <Icon size={18} aria-hidden="true" />
+          {label}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
 export function Layout() {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchContainer = useRef<HTMLDivElement>(null);
+  const searchToggle = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (searchOpen) searchContainer.current?.querySelector('input')?.focus();
+  }, [searchOpen]);
+  const drawer = useRef<HTMLDialogElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  function closeMenu() {
+    drawer.current?.close();
+    setMenuOpen(false);
+  }
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const desktop = window.matchMedia('(min-width: 1025px)');
+    const closeOnDesktop = () => {
+      if (desktop.matches) closeMenu();
+    };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => {
+      document.body.style.overflow = previous;
+      desktop.removeEventListener('change', closeOnDesktop);
+    };
+  }, [menuOpen]);
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main">
         Skip to content
       </a>
       <aside className="sidebar">
-        <NavLink to="/" className="brand">
-          <span className="brand-symbol">
-            <Blocks size={24} />
-          </span>
-          <span>
-            Gulf Invoice<span className="brand-sub">BRIDGE</span>
-          </span>
-        </NavLink>
-        <div className="workspace-label">OPERATIONS WORKSPACE</div>
-        <nav aria-label="Main navigation">
-          {links.map(([path, label, Icon]) => (
-            <NavLink key={path} to={path} end={path === '/'}>
-              <Icon size={18} />
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="sidebar-note">
-          <span className="tiny-label">BUILT FOR THE WORKFLOW</span>
-          <p>
-            From invoice document
-            <br />
-            to enterprise data.
-          </p>
-          <div className="sidebar-line" />
-          <small>
-            Portfolio prototype
-            <br />
-            Saudi Arabia & United Arab Emirates
-          </small>
-        </div>
-        <div className="profile">
-          <span className="avatar">GB</span>
-          <div>
-            Local workspace<small>Portfolio environment</small>
-          </div>
-        </div>
+        <Brand />
+        <Navigation />
+        <a className="developer-link" href={backendUrl('/docs')} target="_blank" rel="noreferrer">
+          <FileText size={16} /> API documentation <ArrowUpRight size={14} />
+        </a>
       </aside>
-      <div className="workspace">
-        <div className="topbar">
-          <span>
-            Invoice Intelligence <span className="slash">/</span> Operations
-          </span>
-          <a href={backendUrl('/docs')} target="_blank" rel="noreferrer">
+      <dialog
+        ref={drawer}
+        id="mobile-navigation"
+        className="nav-drawer"
+        aria-label="Navigation menu"
+        onClose={() => setMenuOpen(false)}
+        onCancel={() => setMenuOpen(false)}
+        onClick={(event) => {
+          if (event.target === drawer.current) closeMenu();
+        }}
+      >
+        <div className="drawer-content">
+          <div className="drawer-heading">
+            <Brand onNavigate={closeMenu} />
+            <button className="icon-button" aria-label="Close navigation" onClick={closeMenu}>
+              <X size={20} />
+            </button>
+          </div>
+          <Navigation mobile onNavigate={closeMenu} />
+          <a className="developer-link" href={backendUrl('/docs')} target="_blank" rel="noreferrer">
             API documentation <ArrowUpRight size={14} />
           </a>
         </div>
-        <main id="main">
+      </dialog>
+      <div className="workspace">
+        <header className="topbar">
+          <button
+            className="icon-button menu-toggle"
+            aria-label="Open navigation"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+            onClick={() => {
+              drawer.current?.showModal();
+              setMenuOpen(true);
+            }}
+          >
+            <Menu size={21} />
+          </button>
+          <div className="mobile-brand">
+            <Brand />
+          </div>
+          <div
+            ref={searchContainer}
+            id="header-search"
+            className={`header-search ${searchOpen ? 'is-open' : ''}`}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && searchOpen) {
+                setSearchOpen(false);
+                searchToggle.current?.focus();
+              }
+            }}
+          >
+            <WorkspaceSearch />
+          </div>
+          <button
+            ref={searchToggle}
+            className="icon-button mobile-search-toggle"
+            aria-label="Toggle invoice search"
+            aria-expanded={searchOpen}
+            aria-controls="header-search"
+            onClick={() => setSearchOpen((value) => !value)}
+          >
+            <Search size={20} />
+          </button>
+        </header>
+        <main id="main" tabIndex={-1}>
           <Outlet />
         </main>
         <footer>
-          Gulf Invoice Bridge{' '}
-          <span>Engineering portfolio · No government certification or connection</span>
+          <span>Gulf Invoice Bridge</span>
+          <span>AI extracts. Rules validate. Humans approve. APIs integrate.</span>
         </footer>
       </div>
+      <nav className="bottom-navigation" aria-label="Mobile shortcuts">
+        <NavLink to="/" end>
+          <LayoutDashboard size={20} />
+          <span>Overview</span>
+        </NavLink>
+        <NavLink to="/invoices">
+          <FileText size={20} />
+          <span>Invoices</span>
+        </NavLink>
+        <ProcessInvoice label="Upload" />
+        <NavLink to="/review">
+          <ListChecks size={20} />
+          <span>Review</span>
+        </NavLink>
+        <button
+          aria-label="Open navigation menu"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => {
+            drawer.current?.showModal();
+            setMenuOpen(true);
+          }}
+        >
+          <Menu size={20} />
+          <span>Menu</span>
+        </button>
+      </nav>
     </div>
   );
 }

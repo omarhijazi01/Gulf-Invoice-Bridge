@@ -9,8 +9,7 @@ export function Logs() {
   return (
     <>
       <PageHeader
-        eyebrow="OBSERVABILITY"
-        title="Integration logs"
+        title="Activity Logs"
         description="A persistent record of every request to the ERP simulator."
       >
         <button className="button secondary" onClick={reload}>
@@ -22,6 +21,7 @@ export function Logs() {
           {['ALL', 'SUCCESS', 'FAILED', 'WARNING'].map((value) => (
             <button
               className={`filter-button ${filter === value ? 'selected' : ''}`}
+              aria-pressed={filter === value}
               onClick={() => setFilter(value)}
               key={value}
             >

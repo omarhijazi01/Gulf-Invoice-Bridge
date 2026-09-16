@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Check, Play, SquarePen } from 'lucide-react';
 import { api } from '../services/api';
@@ -8,16 +8,29 @@ import { InvoiceForm } from '../components/InvoiceForm';
 import { InvoiceData, Timeline } from '../components/InvoiceData';
 import { ValidationSummary } from '../components/ValidationSummary';
 import { ERPPanel } from '../components/ERPPanel';
-import type { InvoiceFields } from '../types';
+import type { Invoice, InvoiceFields } from '../types';
+import { InvoiceOverview, DocumentPreview } from '../components/InvoiceOverview';
 export function InvoiceDetails() {
   const { id = '' } = useParams();
+  return <InvoiceWorkspace key={id} id={id} />;
+}
+export function InvoiceWorkspace({
+  id,
+  embedded = false,
+  onUpdated,
+}: {
+  id: string;
+  embedded?: boolean;
+  onUpdated?: (invoice: Invoice) => void;
+}) {
   const load = useCallback(() => api.invoice(id), [id]);
   const { data: invoice, error, loading, reload, setData } = useResource(load);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState('');
   const [notice, setNotice] = useState('');
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState(embedded ? 'data' : 'overview');
+  const tabsId = useId();
   async function action(name: string, scenario?: string) {
     setBusy(true);
     setActionError('');
@@ -25,6 +38,7 @@ export function InvoiceDetails() {
     try {
       const updated = await api.action(id, name, scenario);
       setData(updated);
+      onUpdated?.(updated);
       setNotice(
         updated.status === 'INTEGRATION_FAILED'
           ? 'Integration failed. Review the attempt below and retry when ready.'
@@ -42,7 +56,9 @@ export function InvoiceDetails() {
     setBusy(true);
     setActionError('');
     try {
-      setData(await api.edit(id, values));
+      const updated = await api.edit(id, values);
+      setData(updated);
+      onUpdated?.(updated);
       setEditing(false);
       setNotice('Corrections saved. Re-run validation before approval.');
     } catch (e) {
@@ -54,12 +70,14 @@ export function InvoiceDetails() {
   if (error) return <ErrorState message={error} retry={reload} />;
   if (loading || !invoice) return <LoadingState />;
   return (
-    <>
-      <Link className="back-link" to="/invoices">
-        <ArrowLeft size={15} /> All invoices
-      </Link>
+    <div className={`invoice-workspace ${embedded ? 'embedded-workspace' : ''}`}>
+      {!embedded && (
+        <Link className="back-link" to="/invoices">
+          <ArrowLeft size={15} /> All invoices
+        </Link>
+      )}
       <PageHeader
-        eyebrow={invoice.is_demo ? 'FICTIONAL DEMO DOCUMENT' : 'INVOICE WORKSPACE'}
+        eyebrow="INVOICE DETAILS"
         title={invoice.invoice_number || invoice.filename}
         description={invoice.supplier_name || 'Document uploaded. Extract its contents to begin.'}
       >
@@ -108,16 +126,50 @@ export function InvoiceDetails() {
       )}
       <div className="tabs" role="tablist" aria-label="Invoice sections">
         {[
-          ['overview', 'Invoice & validation'],
-          ['erp', 'ERP payload & integration'],
-          ['history', 'Processing history'],
+          ['overview', 'Overview'],
+          ['data', 'Extracted Data'],
+          ['validation', 'Validation'],
+          ['erp', 'Integration'],
+          ['document', 'Document'],
+          ['history', 'History'],
         ].map(([key, label]) => (
-          <button role="tab" aria-selected={tab === key} key={key} onClick={() => setTab(key)}>
+          <button
+            role="tab"
+            id={`${tabsId}-${key}`}
+            aria-controls={`${tabsId}-panel`}
+            tabIndex={tab === key ? 0 : -1}
+            aria-selected={tab === key}
+            key={key}
+            onClick={() => setTab(key)}
+            onKeyDown={(event) => {
+              const tabs = Array.from(
+                event.currentTarget.parentElement!.querySelectorAll<HTMLButtonElement>(
+                  '[role="tab"]',
+                ),
+              );
+              const index = tabs.indexOf(event.currentTarget);
+              const next =
+                event.key === 'ArrowRight'
+                  ? (index + 1) % tabs.length
+                  : event.key === 'ArrowLeft'
+                    ? (index + tabs.length - 1) % tabs.length
+                    : event.key === 'Home'
+                      ? 0
+                      : event.key === 'End'
+                        ? tabs.length - 1
+                        : -1;
+              if (next >= 0) {
+                event.preventDefault();
+                tabs[next].focus();
+                tabs[next].click();
+              }
+            }}
+          >
             {label}
           </button>
         ))}
       </div>
-      <div role="tabpanel">
+      <div role="tabpanel" id={`${tabsId}-panel`} aria-labelledby={`${tabsId}-${tab}`} tabIndex={0}>
         {editing ? (
           <InvoiceForm
             invoice={invoice}
@@ -126,16 +178,19 @@ export function InvoiceDetails() {
             onCancel={() => setEditing(false)}
           />
         ) : tab === 'overview' ? (
-          <>
-            <InvoiceData invoice={invoice} />
-            <ValidationSummary rules={invoice.validation_results} />
-          </>
+          <InvoiceOverview invoice={invoice} />
+        ) : tab === 'data' ? (
+          <InvoiceData invoice={invoice} />
+        ) : tab === 'validation' ? (
+          <ValidationSummary rules={invoice.validation_results} />
+        ) : tab === 'document' ? (
+          <DocumentPreview invoice={invoice} />
         ) : tab === 'erp' ? (
           <ERPPanel invoice={invoice} busy={busy} onAction={action} />
         ) : (
           <Timeline invoice={invoice} />
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -21,11 +21,12 @@ export function InvoiceTable({
       />
     );
   return (
-    <div className="table-wrap">
+    <div className="table-wrap" tabIndex={0} role="region" aria-label="Invoices table">
       <table>
         <thead>
           <tr>
-            <th>Invoice / supplier</th>
+            <th>Invoice</th>
+            <th>Vendor</th>
             <th>Amount</th>
             <th>{review ? 'Issue' : 'Validation'}</th>
             <th>Workflow status</th>
@@ -44,7 +45,11 @@ export function InvoiceTable({
                   {i.invoice_number || i.filename}
                 </Link>
                 {i.is_demo && <span className="sample-tag">DEMO</span>}
-                <small>{i.supplier_name || 'Awaiting extraction'}</small>
+              </td>
+              <td>
+                <span className="table-vendor" title={i.supplier_name || undefined}>
+                  {i.supplier_name || 'Awaiting extraction'}
+                </span>
               </td>
               <td className="tabular">
                 <strong>{amount(i.total_amount)}</strong>
