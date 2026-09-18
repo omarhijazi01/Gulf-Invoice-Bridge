@@ -34,6 +34,7 @@ export function Landing() {
               className="landing-sign-in"
               type="button"
               disabled
+              aria-disabled="true"
               title="Authentication will be enabled in the next phase"
             >
               Sign in
