@@ -407,13 +407,6 @@
   font-size: 12px;
 }
 
-.landing-image-credit {
-  margin-left: auto;
-  color: rgb(224 240 235 / 46%);
-  font-size: 9px;
-  line-height: 1.4;
-  text-align: right;
-}
 
 @media (max-width: 1080px) {
   .landing-header { grid-template-columns: 1fr auto; }
@@ -472,5 +465,4 @@
   .landing-about-section { grid-template-columns: 1fr; gap: 30px; }
   .landing-principle { grid-template-columns: 1fr; }
   .landing-footer { padding: 22px 18px; align-items: flex-start; flex-direction: column; }
-  .landing-image-credit { margin-left: 0; text-align: left; }
 }
