@@ -1,5 +1,8 @@
 # Gulf Invoice Bridge
 
+**Portfolio:** https://omarhijazi01.github.io
+
+
 **AI-Powered Invoice Intelligence & Enterprise Integration Platform**
 
 > AI extracts. Rules validate. Humans approve. APIs integrate.
