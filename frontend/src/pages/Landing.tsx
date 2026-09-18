@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   Blocks,
-  CirclePlay,
+  Github,
   FileText,
   ScanLine,
   PlugZap,
@@ -25,7 +25,7 @@ export function Landing() {
 
           <nav className="landing-nav" aria-label="Landing navigation">
             <a href="#features">Features</a>
-            <a href="#workflow">Workflow</a>
+            <a href="#integrations">Integrations</a>
             <a href="#about">About</a>
           </nav>
 
@@ -38,9 +38,6 @@ export function Landing() {
             >
               Sign in
             </button>
-            <Link className="landing-get-started landing-get-started-small" to="/app">
-              Get started
-            </Link>
           </div>
         </header>
 
@@ -60,17 +57,22 @@ export function Landing() {
 
             <div className="landing-cta-row">
               <Link className="landing-primary-cta" to="/app">
-                Get started <ArrowRight size={18} />
+                Open live demo <ArrowRight size={18} />
               </Link>
-              <Link className="landing-demo-cta" to="/app">
-                <CirclePlay size={19} />
-                Watch demo
-              </Link>
+              <a
+                className="landing-demo-cta"
+                href="https://github.com/omarhijazi01/Gulf-Invoice-Bridge"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github size={19} />
+                View GitHub
+              </a>
             </div>
           </div>
 
           <div className="landing-visual" aria-hidden="true">
-            <img src="https://images.unsplash.com/photo-1768463852068-cc277b8baf35?auto=format&fit=crop&w=1800&q=86" alt="" />
+            <img src="/landing-city.jpg" alt="" />
           </div>
         </div>
 
@@ -107,7 +109,7 @@ export function Landing() {
         </div>
       </section>
 
-      <section className="landing-section landing-workflow-section" id="workflow">
+      <section className="landing-section landing-workflow-section" id="integrations">
         <div className="landing-section-heading">
           <span>WORKFLOW</span>
           <h2>From invoice intake to controlled ERP delivery.</h2>
@@ -139,9 +141,6 @@ export function Landing() {
             <span><Blocks size={18} /> Modular processing stages</span>
             <span><ShieldCheck size={18} /> Human approval before integration</span>
           </div>
-          <Link className="landing-secondary-link" to="/app">
-            Explore the live system <ArrowRight size={17} />
-          </Link>
         </div>
       </section>
 
