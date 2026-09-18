@@ -1,11 +1,5 @@
 import type { Invoice, InvoiceFields, IntegrationLog, Stats, System } from '../types';
-const configuredApiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').trim();
-const vercelPreviewApiBaseUrl =
-  typeof window !== 'undefined' && window.location.hostname.endsWith('.vercel.app')
-    ? 'https://gulf-invoice-backend.onrender.com'
-    : '';
-
-export const API_BASE_URL = (configuredApiBaseUrl || vercelPreviewApiBaseUrl).replace(/\/+$/, '');
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').trim().replace(/\/+$/, '');
 
 export function backendUrl(path: `/${string}`): string {
   return `${API_BASE_URL}${path}`;
