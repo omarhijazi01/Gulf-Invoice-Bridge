@@ -1,8 +1,31 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://gulf-invoice-backend.onrender.com/api/:path*"
+    },
+    {
+      "source": "/docs",
+      "destination": "https://gulf-invoice-backend.onrender.com/docs"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "https://gulf-invoice-backend.onrender.com/openapi.json"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "x-vercel-enable-rewrite-caching",
+          "value": "0"
+        }
+      ]
     }
   ]
 }
