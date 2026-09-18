@@ -73,7 +73,7 @@ export function Landing() {
           </div>
 
           <div className="landing-visual" aria-hidden="true">
-            <img src="/landing-city.jpg" alt="" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Burj_Khalifa_%28worlds_tallest_building%29_and_the_Dubai_skyline_%2825781049892%29.jpg" alt="" />
           </div>
         </div>
 
@@ -148,6 +148,9 @@ export function Landing() {
       <footer className="landing-footer">
         <span>Gulf Invoice Bridge</span>
         <span>Invoice intelligence · Validation · Human review · ERP integration</span>
+        <small className="landing-image-credit">
+          Dubai skyline photo: Imran Shahabuddin · CC BY 2.0
+        </small>
       </footer>
     </div>
   );
