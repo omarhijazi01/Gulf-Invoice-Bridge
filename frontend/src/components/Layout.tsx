@@ -18,7 +18,7 @@ import { WorkspaceSearch } from './WorkspaceSearch';
 import { ProcessInvoice } from './ProcessInvoice';
 
 const links = [
-  ['/', 'Overview', LayoutDashboard],
+  ['/app', 'Overview', LayoutDashboard],
   ['/invoices', 'Invoices', FileText],
   ['/review', 'Review Queue', ListChecks],
   ['/integrations', 'Integrations', Plug],
@@ -28,7 +28,7 @@ const links = [
 
 function Brand({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <NavLink to="/" className="brand" onClick={onNavigate}>
+    <NavLink to="/app" className="brand" onClick={onNavigate}>
       <span className="brand-symbol">
         <Blocks size={25} aria-hidden="true" />
       </span>
@@ -41,7 +41,7 @@ function Navigation({ mobile = false, onNavigate }: { mobile?: boolean; onNaviga
   return (
     <nav aria-label={mobile ? 'Mobile navigation' : 'Main navigation'}>
       {links.map(([path, label, Icon]) => (
-        <NavLink key={path} to={path} end={path === '/'} onClick={onNavigate}>
+        <NavLink key={path} to={path} end={path === '/app'} onClick={onNavigate}>
           <Icon size={18} aria-hidden="true" />
           {label}
         </NavLink>
@@ -164,7 +164,7 @@ export function Layout() {
         </footer>
       </div>
       <nav className="bottom-navigation" aria-label="Mobile shortcuts">
-        <NavLink to="/" end>
+        <NavLink to="/app" end>
           <LayoutDashboard size={20} />
           <span>Overview</span>
         </NavLink>

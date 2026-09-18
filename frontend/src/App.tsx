@@ -1,17 +1,20 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { Layout } from './components/Layout';
+import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import { Invoices } from './pages/Invoices';
 import { ReviewQueue } from './pages/ReviewQueue';
 import { InvoiceDetails } from './pages/InvoiceDetails';
 import { Integrations, Settings } from './pages/Integrations';
 import { Logs } from './pages/Logs';
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route index element={<LandingPage />} />
         <Route element={<Layout />}>
-          <Route index element={<Dashboard />} />
+          <Route path="app" element={<Dashboard />} />
           <Route path="invoices" element={<Invoices />} />
           <Route path="invoices/:id" element={<InvoiceDetails />} />
           <Route path="review" element={<ReviewQueue />} />
@@ -23,7 +26,7 @@ export default function App() {
             element={
               <div className="state">
                 <h1>Page not found</h1>
-                <Link to="/">Return to overview</Link>
+                <Link to="/app">Return to overview</Link>
               </div>
             }
           />
