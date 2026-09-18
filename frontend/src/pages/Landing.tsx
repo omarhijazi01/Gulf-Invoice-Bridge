@@ -70,7 +70,7 @@ export function Landing() {
           </div>
 
           <div className="landing-visual" aria-hidden="true">
-            <img src="/landing-city.jpg" alt="" />
+            <img src="https://images.unsplash.com/photo-1768463852068-cc277b8baf35?auto=format&fit=crop&w=1800&q=86" alt="" />
           </div>
         </div>
 
