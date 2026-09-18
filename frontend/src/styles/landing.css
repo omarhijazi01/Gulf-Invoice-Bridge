@@ -100,7 +100,11 @@
   border: 1px solid var(--hero-ghost-border);
   background: rgb(255 255 255 / 2%);
 }
-.landing-sign-in:disabled { cursor: default; opacity: .88; }
+.landing-sign-in:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+  pointer-events: none;
+}
 
 .landing-get-started {
   color: var(--hero-cta-text);
