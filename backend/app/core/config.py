@@ -20,6 +20,7 @@ class Settings:
     erp_database_url: str = os.getenv("ERP_DATABASE_URL", "sqlite:///./runtime/erp.db")
     upload_dir: Path = Path(os.getenv("UPLOAD_DIR", "./runtime/uploads"))
     demo_mode: bool = os.getenv("DEMO_MODE", "true").lower() == "true"
+    auto_seed_demo: bool = os.getenv("AUTO_SEED_DEMO", "false").lower() == "true"
     ai_provider: str = os.getenv("AI_PROVIDER", "demo")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
