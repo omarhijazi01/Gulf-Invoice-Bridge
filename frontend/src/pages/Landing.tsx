@@ -1,13 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Blocks,
-  CirclePlay,
-  FileText,
-  ScanLine,
-  PlugZap,
-  ShieldCheck,
-} from 'lucide-react';
+import { ArrowRight, Blocks, Github, FileText, ScanLine, PlugZap, ShieldCheck } from 'lucide-react';
 
 const workflow = ['Upload', 'Extract', 'Validate', 'Review', 'Approve', 'Integrate'];
 
@@ -18,14 +10,17 @@ export function Landing() {
         <header className="landing-header">
           <Link to="/" className="landing-brand" aria-label="Gulf Invoice Bridge home">
             <span className="landing-brand-mark" aria-hidden="true">
-              <span /><span /><span /><span />
+              <span />
+              <span />
+              <span />
+              <span />
             </span>
             <strong>Gulf Invoice Bridge</strong>
           </Link>
 
           <nav className="landing-nav" aria-label="Landing navigation">
             <a href="#features">Features</a>
-            <a href="#workflow">Workflow</a>
+            <Link to="/integrations">Integrations</Link>
             <a href="#about">About</a>
           </nav>
 
@@ -34,13 +29,14 @@ export function Landing() {
               className="landing-sign-in"
               type="button"
               disabled
-              title="Authentication will be enabled in the next phase"
+              title="Sign in is not available yet"
+              aria-describedby="sign-in-note"
             >
               Sign in
             </button>
-            <Link className="landing-get-started landing-get-started-small" to="/app">
-              Get started
-            </Link>
+            <span id="sign-in-note" className="landing-sign-in-note">
+              Coming soon
+            </span>
           </div>
         </header>
 
@@ -55,26 +51,37 @@ export function Landing() {
             <p className="landing-hero-line">Extract. Validate. Review. Approve. Integrate.</p>
 
             <p className="landing-lead">
-              Turn invoice documents into structured, validated and ERP-ready business data — transparently.
+              Turn invoice documents into structured, validated and ERP-ready business data —
+              transparently.
             </p>
 
             <div className="landing-cta-row">
               <Link className="landing-primary-cta" to="/app">
-                Get started <ArrowRight size={18} />
+                Open live demo <ArrowRight size={18} />
               </Link>
-              <Link className="landing-demo-cta" to="/app">
-                <CirclePlay size={19} />
-                Watch demo
-              </Link>
+              <a
+                className="landing-demo-cta"
+                href="https://github.com/omarhijazi01/Gulf-Invoice-Bridge"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Github size={19} />
+                View GitHub
+              </a>
             </div>
           </div>
 
           <div className="landing-visual" aria-hidden="true">
-            <img src="/landing-city.jpg" alt="" />
+            <img src="/landing-city.png" alt="" width="1024" height="1536" fetchPriority="high" />
           </div>
         </div>
 
-        <svg className="landing-ribbon" viewBox="0 0 1440 900" preserveAspectRatio="none" aria-hidden="true">
+        <svg
+          className="landing-ribbon"
+          viewBox="0 0 1440 900"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
           <defs>
             <linearGradient id="landingRibbonA" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#0d5f59" stopOpacity=".12" />
@@ -86,23 +93,50 @@ export function Landing() {
               <stop offset="100%" stopColor="#a9d7c9" stopOpacity=".70" />
             </linearGradient>
           </defs>
-          <path d="M-120 690C155 775 355 777 568 670C830 538 952 260 1540 170L1540 360C1020 390 890 590 635 720C382 849 137 865-120 785Z" fill="url(#landingRibbonA)" />
-          <path d="M-110 635C175 705 354 698 555 595C792 474 914 297 1510 164" fill="none" stroke="#d9f1e8" strokeWidth="3" strokeOpacity=".46" />
-          <path d="M-100 755C145 822 388 824 610 730C850 628 1020 436 1540 340L1540 490C1050 525 907 670 668 770C417 875 146 888-100 827Z" fill="url(#landingRibbonB)" />
+          <path
+            d="M-120 690C155 775 355 777 568 670C830 538 952 260 1540 170L1540 360C1020 390 890 590 635 720C382 849 137 865-120 785Z"
+            fill="url(#landingRibbonA)"
+          />
+          <path
+            d="M-110 635C175 705 354 698 555 595C792 474 914 297 1510 164"
+            fill="none"
+            stroke="#d9f1e8"
+            strokeWidth="3"
+            strokeOpacity=".46"
+          />
+          <path
+            d="M-100 755C145 822 388 824 610 730C850 628 1020 436 1540 340L1540 490C1050 525 907 670 668 770C417 875 146 888-100 827Z"
+            fill="url(#landingRibbonB)"
+          />
         </svg>
 
         <div className="landing-feature-strip" id="features">
           <article>
-            <span className="landing-feature-icon"><FileText size={21} /></span>
-            <div><strong>Document intake</strong><small>Text-based PDF and guided samples</small></div>
+            <span className="landing-feature-icon">
+              <FileText size={21} />
+            </span>
+            <div>
+              <strong>Document intake</strong>
+              <small>Text-based PDF and guided samples</small>
+            </div>
           </article>
           <article>
-            <span className="landing-feature-icon"><ScanLine size={21} /></span>
-            <div><strong>Extraction &amp; validation</strong><small>Structured data with deterministic checks</small></div>
+            <span className="landing-feature-icon">
+              <ScanLine size={21} />
+            </span>
+            <div>
+              <strong>Extraction &amp; validation</strong>
+              <small>Structured data with deterministic checks</small>
+            </div>
           </article>
           <article>
-            <span className="landing-feature-icon"><PlugZap size={21} /></span>
-            <div><strong>ERP-ready integration</strong><small>Transform, deliver, retry and observe</small></div>
+            <span className="landing-feature-icon">
+              <PlugZap size={21} />
+            </span>
+            <div>
+              <strong>ERP-ready integration</strong>
+              <small>Transform, deliver, retry and observe</small>
+            </div>
           </article>
         </div>
       </section>
@@ -112,7 +146,8 @@ export function Landing() {
           <span>WORKFLOW</span>
           <h2>From invoice intake to controlled ERP delivery.</h2>
           <p>
-            The workflow keeps extraction, rules, human review and integration as explicit stages so every decision remains visible.
+            The workflow keeps extraction, rules, human review and integration as explicit stages so
+            every decision remains visible.
           </p>
         </div>
         <div className="landing-workflow">
@@ -132,16 +167,18 @@ export function Landing() {
         </div>
         <div>
           <p>
-            The current live demo uses a deterministic parser for reproducible sample extraction. The extraction boundary remains
-            replaceable, while validation, human approval, payload transformation and integration behavior stay explicit and testable.
+            The current live demo uses a deterministic parser for reproducible sample extraction.
+            The extraction boundary remains replaceable, while validation, human approval, payload
+            transformation and integration behavior stay explicit and testable.
           </p>
           <div className="landing-principle">
-            <span><Blocks size={18} /> Modular processing stages</span>
-            <span><ShieldCheck size={18} /> Human approval before integration</span>
+            <span>
+              <Blocks size={18} /> Modular processing stages
+            </span>
+            <span>
+              <ShieldCheck size={18} /> Human approval before integration
+            </span>
           </div>
-          <Link className="landing-secondary-link" to="/app">
-            Explore the live system <ArrowRight size={17} />
-          </Link>
         </div>
       </section>
 
