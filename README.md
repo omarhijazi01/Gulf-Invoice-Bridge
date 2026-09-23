@@ -2,6 +2,8 @@
 
 **Portfolio:** https://omarhijazi01.github.io
 
+**Live application:** https://gulf-invoice-bridge.omarmaheer921.workers.dev
+
 
 **AI-Powered Invoice Intelligence & Enterprise Integration Platform**
 

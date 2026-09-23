@@ -2,6 +2,8 @@
 
 **AI-Powered Invoice Intelligence & Enterprise Integration Platform**
 
+**Live application:** https://gulf-invoice-bridge.omarmaheer921.workers.dev
+
 A local full-stack engineering portfolio product that turns invoice PDFs into validated records and delivers approved data to an independent ERP simulator.
 
 ## Business problem and solution
