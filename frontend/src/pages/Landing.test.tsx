@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Landing } from './Landing';
 afterEach(cleanup);
 describe('landing entry points', () => {
-  it('offers one demo entry and the actual repository, with unavailable authentication disabled', () => {
+  it('offers one demo entry, repository, and sign-in route', () => {
     render(
       <MemoryRouter>
         <Landing />
@@ -16,7 +16,7 @@ describe('landing entry points', () => {
       'href',
       'https://github.com/omarhijazi01/Gulf-Invoice-Bridge',
     );
-    expect(screen.getByRole('button', { name: 'Sign in' })).toBeDisabled();
+    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/sign-in');
     expect(screen.queryByRole('link', { name: 'Get started' })).not.toBeInTheDocument();
   });
   it('connects section links and preserves the existing integrations route', () => {

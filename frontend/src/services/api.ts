@@ -1,4 +1,5 @@
 import type { Invoice, InvoiceFields, IntegrationLog, Stats, System } from '../types';
+import { auth } from './auth';
 export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '').trim().replace(/\/+$/, '');
 
 export function backendUrl(path: `/${string}`): string {
@@ -6,14 +7,22 @@ export function backendUrl(path: `/${string}`): string {
 }
 
 export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  const {
+    data: { session },
+  } = auth ? await auth.auth.getSession() : { data: { session: null } };
   const response = await fetch(backendUrl(`/api${path}`), {
     ...options,
     headers:
-      options.body instanceof FormData
+      options.body instanceof FormData && !session
         ? options.headers
-        : { 'Content-Type': 'application/json', ...options.headers },
+        : {
+            ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+            ...options.headers,
+            ...(session ? { Authorization: `Bearer ${session.access_token}` } : {}),
+          },
   });
   const data = await response.json().catch(() => null);
+  if (response.status === 401 && session) await auth.auth.signOut();
   if (!response.ok)
     throw new Error(data?.error?.message ?? `Request failed (HTTP ${response.status})`);
   return data as T;

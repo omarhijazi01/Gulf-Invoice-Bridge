@@ -1,3 +1,4 @@
+/* global URL, fetch, Request */
 // Keep browser requests same-origin while the existing API stays on Render.
 export default {
   async fetch(request, env) {

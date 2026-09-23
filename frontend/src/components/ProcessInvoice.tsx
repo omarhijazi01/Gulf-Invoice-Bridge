@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, FileCheck2, FileWarning, Upload, Plus, X } from 'lucide-react';
 import { api } from '../services/api';
 import { ErrorState } from './Common';
+import { auth } from '../services/auth';
 export function ProcessInvoice({ label = 'Process Invoice' }: { label?: string }) {
   const titleId = useId();
   const [open, setOpen] = useState(false);
@@ -58,7 +59,11 @@ export function ProcessInvoice({ label = 'Process Invoice' }: { label?: string }
             <X size={20} />
           </button>
         </div>
-        <p className="muted">Upload a text-based PDF or explore a fictional sample.</p>
+        <p className="muted">
+          {auth
+            ? 'This limited beta uses fictional samples. Private PDF uploads will open when durable storage is ready.'
+            : 'Upload a text-based PDF or explore a fictional sample.'}
+        </p>
         {open && (
           <>
             <div className="intake-grid">
@@ -70,7 +75,7 @@ export function ProcessInvoice({ label = 'Process Invoice' }: { label?: string }
                   aria-label="Upload invoice PDF"
                   type="file"
                   accept="application/pdf,.pdf"
-                  disabled={busy}
+                  disabled={busy || Boolean(auth)}
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) void process(undefined, file);

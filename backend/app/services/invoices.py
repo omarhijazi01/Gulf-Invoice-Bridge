@@ -36,6 +36,7 @@ class InvoiceService:
         try:
             path.write_bytes(data)
             invoice = Invoice(
+                owner_id=self.db.info.get("owner_id"),
                 filename=Path(filename.replace("\\", "/")).name[:200],
                 storage_key=key,
                 is_demo=is_demo,

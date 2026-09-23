@@ -21,6 +21,9 @@ class Settings:
     upload_dir: Path = Path(os.getenv("UPLOAD_DIR", "./runtime/uploads"))
     demo_mode: bool = os.getenv("DEMO_MODE", "true").lower() == "true"
     auto_seed_demo: bool = os.getenv("AUTO_SEED_DEMO", "false").lower() == "true"
+    auth_required: bool = os.getenv("AUTH_REQUIRED", "false").lower() == "true"
+    supabase_url: str = os.getenv("SUPABASE_URL", "").rstrip("/")
+    supabase_publishable_key: str = os.getenv("SUPABASE_PUBLISHABLE_KEY", "")
     ai_provider: str = os.getenv("AI_PROVIDER", "demo")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")

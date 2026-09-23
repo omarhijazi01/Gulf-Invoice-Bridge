@@ -29,6 +29,7 @@ class ExactDecimal(TypeDecorator):
 class Invoice(Base):
     __tablename__ = "invoices"
     id: Mapped[str] = mapped_column(primary_key=True, default=lambda: str(uuid4()))
+    owner_id: Mapped[str | None] = mapped_column(String(36), index=True, nullable=True)
     filename: Mapped[str]
     storage_key: Mapped[str]
     is_demo: Mapped[bool] = mapped_column(default=False)
