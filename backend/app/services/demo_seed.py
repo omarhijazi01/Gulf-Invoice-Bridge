@@ -163,11 +163,14 @@ def _copy_document(invoice, sample):
         target.write_bytes((settings.sample_dir / f"{sample}.pdf").read_bytes())
 
 
-def seed_portfolio_demo(db):
+def seed_portfolio_demo(db, owner_id=None):
     """Add missing portfolio records without changing any existing data."""
     existing = {
         invoice.invoice_number: invoice
-        for invoice in db.scalars(select(Invoice).where(Invoice.invoice_number.like("SEED-2026-%")))
+        for invoice in db.scalars(select(Invoice).where(
+            Invoice.invoice_number.like("SEED-2026-%"),
+            Invoice.owner_id == owner_id,
+        ))
     }
     created = 0
     # Insert oldest first so integer-keyed activity feeds remain newest-first.
@@ -200,6 +203,7 @@ def seed_portfolio_demo(db):
         total = Decimal(declared_total) if declared_total else subtotal + tax
         timestamp = f"{invoice_date}T09:{index:02d}:00+00:00"
         invoice = Invoice(
+            owner_id=owner_id,
             filename=f"{number}.pdf",
             storage_key=f"portfolio-demo-{index:02d}.pdf",
             is_demo=True,

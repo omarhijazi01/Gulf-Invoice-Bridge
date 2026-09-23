@@ -16,6 +16,8 @@ import {
 import { backendUrl } from '../services/api';
 import { WorkspaceSearch } from './WorkspaceSearch';
 import { ProcessInvoice } from './ProcessInvoice';
+import { auth } from '../services/auth';
+import { useNavigate } from 'react-router-dom';
 
 const links = [
   ['/app', 'Overview', LayoutDashboard],
@@ -51,6 +53,7 @@ function Navigation({ mobile = false, onNavigate }: { mobile?: boolean; onNaviga
 }
 
 export function Layout() {
+  const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
   const searchContainer = useRef<HTMLDivElement>(null);
   const searchToggle = useRef<HTMLButtonElement>(null);
@@ -89,6 +92,16 @@ export function Layout() {
         <a className="developer-link" href={backendUrl('/docs')} target="_blank" rel="noreferrer">
           <FileText size={16} /> API documentation <ArrowUpRight size={14} />
         </a>
+        <button
+          className="developer-link"
+          type="button"
+          onClick={async () => {
+            await auth?.auth.signOut();
+            navigate('/');
+          }}
+        >
+          Sign out
+        </button>
       </aside>
       <dialog
         ref={drawer}

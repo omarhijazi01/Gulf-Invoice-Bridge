@@ -18,6 +18,11 @@ DB = Annotated[Session, Depends(get_db)]
 
 @router.post("/upload", status_code=201)
 def upload(file: UploadFile, db: DB):
+    if settings.auth_required:
+        raise DomainError(
+            "Private PDF uploads are unavailable in this limited beta. Use fictional samples.",
+            503,
+        )
     data = file.file.read(settings.max_upload_bytes + 1)
     return invoice_view(InvoiceService(db).upload(file.filename, file.content_type, data))
 

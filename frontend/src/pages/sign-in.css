@@ -1,0 +1,115 @@
+.auth-page {
+  min-height: 100vh;
+  background: #f3f8f6;
+  color: #173f3a;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.auth-home {
+  align-self: flex-start;
+  color: #17675d;
+  text-decoration: none;
+  font-weight: 700;
+}
+.auth-card {
+  width: min(100%, 440px);
+  margin: auto;
+  background: #fff;
+  border: 1px solid #dce8e3;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 18px 60px #153f3614;
+}
+.auth-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: #377b70;
+}
+.auth-card h1 {
+  font-size: 2rem;
+  margin: 0.6rem 0;
+}
+.auth-card p {
+  line-height: 1.5;
+  color: #526963;
+}
+.auth-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1.4rem 0;
+}
+.auth-tabs button {
+  flex: 1;
+  border: 1px solid #bed5cc;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.65rem;
+  cursor: pointer;
+}
+.auth-tabs button[aria-pressed='true'] {
+  background: #135f56;
+  color: white;
+}
+.auth-tabs button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.auth-card form {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+.auth-card label {
+  font-weight: 650;
+  font-size: 0.85rem;
+}
+.auth-card input {
+  width: 100%;
+  border: 1px solid #b9cfc7;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font: inherit;
+}
+.auth-card input:focus {
+  outline: 2px solid #408e80;
+  outline-offset: 2px;
+}
+.auth-submit {
+  border: 0;
+  background: #135f56;
+  color: white;
+  border-radius: 8px;
+  padding: 0.82rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.4rem;
+}
+.auth-submit:disabled {
+  opacity: 0.6;
+}
+.auth-message {
+  background: #eff8f4;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.auth-switch {
+  background: none;
+  border: 0;
+  color: #12685d;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  margin-top: 1rem;
+}
+@media (max-width: 520px) {
+  .auth-page {
+    padding: 1rem;
+  }
+  .auth-card {
+    padding: 1.4rem;
+  }
+}

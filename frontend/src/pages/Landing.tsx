@@ -25,18 +25,9 @@ export function Landing() {
           </nav>
 
           <div className="landing-header-actions">
-            <button
-              className="landing-sign-in"
-              type="button"
-              disabled
-              title="Sign in is not available yet"
-              aria-describedby="sign-in-note"
-            >
+            <Link className="landing-sign-in" to="/sign-in">
               Sign in
-            </button>
-            <span id="sign-in-note" className="landing-sign-in-note">
-              Coming soon
-            </span>
+            </Link>
           </div>
         </header>
 
