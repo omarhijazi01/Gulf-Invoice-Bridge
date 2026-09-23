@@ -105,7 +105,10 @@ Deno.serve(async (request) => {
   if (alias?.email) {
     const { error: sendError } = await otp.auth.signInWithOtp({
       email: alias.email,
-      options: { shouldCreateUser: false },
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: "https://gulf-invoice-bridge.omarmaheer921.workers.dev/sign-in",
+      },
     });
     if (sendError) console.error("OTP delivery failed", sendError.message);
   }

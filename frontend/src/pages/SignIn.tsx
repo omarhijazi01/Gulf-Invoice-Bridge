@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AUTH_URL, auth } from '../services/auth';
 import './sign-in.css';
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phonePattern = /^\+[1-9]\d{7,14}$/;
+const emailCodesEnabled = import.meta.env.VITE_EMAIL_OTP_CODE_ENABLED === 'true';
 
 export function SignIn() {
   const [mode, setMode] = useState<'email' | 'phone'>('email');
@@ -22,6 +23,21 @@ export function SignIn() {
     typeof location.state?.from === 'string' && location.state.from.startsWith('/')
       ? location.state.from
       : '/app';
+
+  useEffect(() => {
+    if (!auth) return;
+    let active = true;
+    auth.auth.getSession().then(({ data }) => {
+      if (active && data.session) navigate(destination, { replace: true });
+    });
+    const { data } = auth.auth.onAuthStateChange((_event, session) => {
+      if (session) navigate(destination, { replace: true });
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
+  }, [destination, navigate]);
 
   async function sendCode(event: FormEvent) {
     event.preventDefault();
@@ -50,7 +66,11 @@ export function SignIn() {
           throw new Error('Unable to send a code right now. Try your email address.');
         const data = await response.json();
         setPhoneChallenge(data.challenge);
-        setMessage('If this phone is linked to a verified account, a code was sent to its email.');
+        setMessage(
+          emailCodesEnabled
+            ? 'If this phone is linked to a verified account, a code was sent to its email.'
+            : 'If this phone is linked to a verified account, a secure sign-in link was sent to its email.',
+        );
         return;
       }
       const email = identifier.trim().toLowerCase();
@@ -58,12 +78,17 @@ export function SignIn() {
         email,
         options: {
           shouldCreateUser: register,
+          emailRedirectTo: `${window.location.origin}/sign-in`,
           ...(register && phone.trim() ? { data: { phone_alias: phone.trim() } } : {}),
         },
       });
       if (error) throw error;
       setPendingEmail(email);
-      setMessage('Check your email for the six-digit verification code.');
+      setMessage(
+        emailCodesEnabled
+          ? 'Check your email for the six-digit verification code.'
+          : 'Check your email and open the secure sign-in link to continue.',
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not send the code.');
     } finally {
@@ -104,110 +129,147 @@ export function SignIn() {
 
   return (
     <main className="auth-page">
-      <Link className="auth-home" to="/">
-        ← Gulf Invoice Bridge
-      </Link>
-      <div className="auth-card">
-        <span className="auth-eyebrow">LIMITED BETA</span>
-        <h1>{register ? 'Create your account' : 'Sign in'}</h1>
-        <p>Access is available to approved team email addresses. Your code is sent by email.</p>
-        <div className="auth-tabs" aria-label="Sign in method">
-          <button
-            type="button"
-            aria-pressed={mode === 'email'}
-            onClick={() => {
-              setMode('email');
-              setIdentifier('');
-              setPendingEmail('');
-              setPhoneChallenge('');
-              setCode('');
-              setMessage('');
-            }}
-          >
-            Email
-          </button>
-          <button
-            type="button"
-            aria-pressed={mode === 'phone'}
-            disabled={register}
-            onClick={() => {
-              setMode('phone');
-              setIdentifier('');
-              setPendingEmail('');
-              setPhoneChallenge('');
-              setCode('');
-              setMessage('');
-            }}
-          >
-            Phone
-          </button>
-        </div>
-        <form onSubmit={sendCode}>
-          <label htmlFor="identifier">{mode === 'email' ? 'Email address' : 'Phone number'}</label>
-          <input
-            id="identifier"
-            type={mode === 'email' ? 'email' : 'tel'}
-            autoComplete={mode === 'email' ? 'email' : 'tel'}
-            value={identifier}
-            onChange={(event) => setIdentifier(event.target.value)}
-            required
-          />
-          {register && (
-            <>
-              <label htmlFor="phone">Phone number (optional), including country code</label>
-              <input
-                id="phone"
-                type="tel"
-                autoComplete="tel"
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                placeholder="+962790000000"
-              />
-            </>
-          )}
-          <button className="auth-submit" type="submit" disabled={busy}>
-            {busy ? 'Please wait…' : 'Send verification code'}
-          </button>
-        </form>
-        {(pendingEmail || phoneChallenge) && (
-          <form onSubmit={verifyCode}>
-            <label htmlFor="code">Six-digit code</label>
+      <div className="auth-backdrop" aria-hidden="true" />
+      <header className="auth-header">
+        <Link className="auth-home" to="/" aria-label="Back to Gulf Invoice Bridge home">
+          <span className="auth-brand-mark" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+          </span>
+          <strong>Gulf Invoice Bridge</strong>
+        </Link>
+        <span>Secure account access</span>
+      </header>
+
+      <div className="auth-layout">
+        <section className="auth-intro" aria-labelledby="auth-intro-title">
+          <span className="auth-intro-label">INVOICE INTELLIGENCE</span>
+          <h2 id="auth-intro-title">Your invoice workflow, protected from the first step.</h2>
+          <p>
+            Sign in to review, validate and integrate invoices through one controlled workspace.
+          </p>
+          <div className="auth-trust-row" aria-label="Security highlights">
+            <span>Email verified</span>
+            <span>Account isolated</span>
+            <span>Session protected</span>
+          </div>
+        </section>
+
+        <section className="auth-card" aria-labelledby="auth-title">
+          <span className="auth-eyebrow">LIMITED BETA</span>
+          <h1 id="auth-title">{register ? 'Create your account' : 'Welcome back'}</h1>
+          <p>
+            {register
+              ? 'Create your account with an approved email address.'
+              : 'Sign in with your email or linked phone number.'}{' '}
+            Verification is always completed through your email.
+          </p>
+          <div className="auth-tabs" aria-label="Sign in method">
+            <button
+              type="button"
+              aria-pressed={mode === 'email'}
+              onClick={() => {
+                setMode('email');
+                setIdentifier('');
+                setPendingEmail('');
+                setPhoneChallenge('');
+                setCode('');
+                setMessage('');
+              }}
+            >
+              Email
+            </button>
+            <button
+              type="button"
+              aria-pressed={mode === 'phone'}
+              disabled={register}
+              onClick={() => {
+                setMode('phone');
+                setIdentifier('');
+                setPendingEmail('');
+                setPhoneChallenge('');
+                setCode('');
+                setMessage('');
+              }}
+            >
+              Phone
+            </button>
+          </div>
+          <form onSubmit={sendCode}>
+            <label htmlFor="identifier">
+              {mode === 'email' ? 'Email address' : 'Phone number'}
+            </label>
             <input
-              id="code"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="[0-9]{6}"
-              maxLength={6}
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
+              id="identifier"
+              type={mode === 'email' ? 'email' : 'tel'}
+              autoComplete={mode === 'email' ? 'email' : 'tel'}
+              value={identifier}
+              onChange={(event) => setIdentifier(event.target.value)}
               required
             />
+            {register && (
+              <>
+                <label htmlFor="phone">Phone number (optional), including country code</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  placeholder="+962790000000"
+                />
+              </>
+            )}
             <button className="auth-submit" type="submit" disabled={busy}>
-              {busy ? 'Please wait…' : 'Verify and continue'}
+              {busy
+                ? 'Please wait…'
+                : emailCodesEnabled
+                  ? 'Send verification code'
+                  : 'Send verification email'}
             </button>
           </form>
-        )}
-        {message && (
-          <p className="auth-message" role="status">
-            {message}
-          </p>
-        )}
-        <button
-          className="auth-switch"
-          type="button"
-          onClick={() => {
-            setRegister(!register);
-            setMode('email');
-            setPendingEmail('');
-            setPhoneChallenge('');
-            setCode('');
-            setMessage('');
-          }}
-        >
-          {register
-            ? 'Already have an account? Sign in'
-            : 'Approved team member? Create an account'}
-        </button>
+          {emailCodesEnabled && (pendingEmail || phoneChallenge) && (
+            <form className="auth-code-form" onSubmit={verifyCode}>
+              <label htmlFor="code">Six-digit code</label>
+              <input
+                id="code"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                value={code}
+                onChange={(event) => setCode(event.target.value)}
+                required
+              />
+              <button className="auth-submit" type="submit" disabled={busy}>
+                {busy ? 'Please wait…' : 'Verify and continue'}
+              </button>
+            </form>
+          )}
+          {message && (
+            <p className="auth-message" role="status">
+              {message}
+            </p>
+          )}
+          <button
+            className="auth-switch"
+            type="button"
+            onClick={() => {
+              setRegister(!register);
+              setMode('email');
+              setPendingEmail('');
+              setPhoneChallenge('');
+              setCode('');
+              setMessage('');
+            }}
+          >
+            {register
+              ? 'Already have an account? Sign in'
+              : 'Approved team member? Create an account'}
+          </button>
+        </section>
       </div>
     </main>
   );
