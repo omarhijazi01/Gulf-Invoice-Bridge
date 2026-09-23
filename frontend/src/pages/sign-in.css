@@ -2,7 +2,9 @@
   position: relative;
   min-height: 100vh;
   min-height: 100svh;
-  overflow: hidden;
+  overflow-x: clip;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: #0c3834;
   color: #173f3a;
   padding: clamp(1rem, 3vw, 2.25rem);
@@ -10,7 +12,7 @@
 }
 
 .auth-backdrop {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: -2;
   background-image:
@@ -28,7 +30,7 @@
     72% 46%;
   background-repeat: no-repeat;
   background-size: cover;
-  transform: scale(1.015);
+  transform: translateZ(0);
 }
 
 .auth-backdrop::after {
@@ -62,6 +64,22 @@
   color: #fff;
   text-decoration: none;
   font-size: 0.96rem;
+}
+
+.auth-landing-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: rgba(244, 252, 249, 0.9);
+  font-size: 0.82rem;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.auth-landing-link span {
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .auth-brand-mark {
@@ -170,6 +188,22 @@
   margin: 0;
   color: #526963;
   line-height: 1.55;
+}
+
+.auth-card-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42rem;
+  margin: 0.9rem 0 -0.25rem;
+  padding: 0.2rem 0;
+  border: 0;
+  background: transparent;
+  color: #12685d;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .auth-tabs {
@@ -290,10 +324,6 @@
 }
 
 @media (max-width: 900px) {
-  .auth-page {
-    overflow: auto;
-  }
-
   .auth-backdrop {
     background-position:
       center,
@@ -326,10 +356,6 @@
     padding: 1rem;
   }
 
-  .auth-header > span {
-    display: none;
-  }
-
   .auth-layout {
     min-height: auto;
     padding: 3.2rem 0 1rem;
@@ -355,6 +381,16 @@
   .auth-card {
     padding: 1.35rem;
     border-radius: 19px;
+  }
+
+  .auth-landing-link {
+    font-size: 0.76rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.auth-page) {
+    scroll-behavior: smooth;
   }
 }
 

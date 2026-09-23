@@ -140,7 +140,10 @@ export function SignIn() {
           </span>
           <strong>Gulf Invoice Bridge</strong>
         </Link>
-        <span>Secure account access</span>
+        <Link className="auth-landing-link" to="/">
+          <span aria-hidden="true">←</span>
+          Back to landing page
+        </Link>
       </header>
 
       <div className="auth-layout">
@@ -166,6 +169,23 @@ export function SignIn() {
               : 'Sign in with your email or linked phone number.'}{' '}
             Verification is always completed through your email.
           </p>
+          {register && (
+            <button
+              className="auth-card-back"
+              type="button"
+              onClick={() => {
+                setRegister(false);
+                setMode('email');
+                setPendingEmail('');
+                setPhoneChallenge('');
+                setCode('');
+                setMessage('');
+              }}
+            >
+              <span aria-hidden="true">←</span>
+              Back to sign in
+            </button>
+          )}
           <div className="auth-tabs" aria-label="Sign in method">
             <button
               type="button"
